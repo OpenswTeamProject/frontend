@@ -1,8 +1,8 @@
-import React from "react";
-import Listpage from "./pages/Listpage";
+
+import ListPage from "./pages/ListPage";
 
 function App() {
-  return <Listpage />;
+  return <ListPage />;
 }
 
 export default App;
