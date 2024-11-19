@@ -3,7 +3,8 @@ module.exports = {
   theme: {
     extend: {
       backgroundImage: {
-        login: "url('/LoginBack.png')", // Tailwind에서 직접 배경 이미지 설정
+        login: "url('/LoginBack.png')", 
+        list: "url('/ListBack.png')"
       },
     },
   },
