@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-const ListPages: React.FC = () => {
+const ListPage: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [results, setResults] = useState<string[]>([]);
 
@@ -69,4 +69,4 @@ const ListPages: React.FC = () => {
   );
 };
 
-export default ListPages;
+export default ListPage;
