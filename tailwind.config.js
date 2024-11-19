@@ -1,11 +1,11 @@
-/** @type {import('tailwindcss').Config} */
-export default {
-  content: [
-    "./index.html", 
-    "./src/**/*.{js,ts,jsx,tsx}" // Tailwind가 스타일을 적용할 파일 경로
-  ],
+module.exports = {
+  content: ["./src/**/*.{js,ts,jsx,tsx}"],
   theme: {
-    extend: {}, // 사용자 정의 스타일 추가
+    extend: {
+      backgroundImage: {
+        login: "url('/LoginBack.png')", // Tailwind에서 직접 배경 이미지 설정
+      },
+    },
   },
   plugins: [],
 };
