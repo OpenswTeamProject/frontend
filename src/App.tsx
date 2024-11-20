@@ -1,8 +1,8 @@
-
-import ListPage from "./pages/ListPage";
+import React from "react";
+import AppRoutes from "./routes/AppRoutes";
 
 function App() {
-  return <ListPage />;
+  return <AppRoutes />;
 }
 
 export default App;

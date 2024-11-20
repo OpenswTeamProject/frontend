@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 
 const ListPage: React.FC = () => {
+
   const [searchTerm, setSearchTerm] = useState<string>(""); // 검색어 상태
   const [results, setResults] = useState<string[]>([]); // 검색 결과 상태
   const [selectedItem, setSelectedItem] = useState<string | null>(null); // 선택된 항목 상태
@@ -38,6 +39,7 @@ const ListPage: React.FC = () => {
         backgroundImage: "url('/ListBack.png')",
       }}
     >
+
       <h1 className="text-3xl font-bold mb-8">대여소 리스트</h1>
 
       {/* 검색창 */}
@@ -45,7 +47,9 @@ const ListPage: React.FC = () => {
         <input
           type="text"
           value={searchTerm}
+
           onChange={(e) => setSearchTerm(e.target.value)} // 검색어 상태 업데이트
+
           placeholder="검색어를 입력하세요"
           className="w-full p-3 rounded-full border border-green-500 bg-gray-200 text-black focus:outline-none"
         />
@@ -61,6 +65,7 @@ const ListPage: React.FC = () => {
       {results.length > 0 && (
         <div className="mt-8 bg-gray-100 rounded-lg p-4 w-full max-w-md border border-green-500">
           {results.map((item, index) => (
+
             <button
               key={index}
               onClick={() => handleSelectItem(item)} // 클릭 시 선택 처리
@@ -72,12 +77,15 @@ const ListPage: React.FC = () => {
             >
               {item}
             </button>
+
           ))}
         </div>
       )}
 
       {/* 검색 결과가 없을 때 */}
+
       {hasSearched && results.length === 0 && (
+
         <p className="mt-8 text-gray-400">검색 결과가 없습니다.</p>
       )}
     </div>
