@@ -1,11 +1,15 @@
 import React from "react";
-import WeatherInfo from "../components/WeatherInfo";
-import DonutChart from "../components/DonutChart";
+import { useLocation } from "react-router-dom"; // React Router의 useLocation 훅
+import DockInfo from "../components/DockInfo";
+import RentalStationList from "../components/RentalStationList";
 import LineChart from "../components/LineChart";
 import { mockBikeData } from "../api/mockBikeData";
 import { mockWeatherData } from "../api/mockWeatherData";
 
 const Statistics: React.FC = () => {
+  const location = useLocation();
+  const selectedStation = location.state?.selectedStation || "[지역명]"; // 전달된 데이터
+
   const { temperature, humidity, windSpeed, weather } = mockWeatherData;
 
   return (
@@ -15,45 +19,53 @@ const Statistics: React.FC = () => {
         backgroundImage: "url('/ListBack.png')",
       }}
     >
-      <div className="w-full max-w-6xl bg-white p-6 rounded-lg shadow-lg text-black">
-        <header className="bg-gray-200 p-4 rounded-md shadow-md text-center border-b-2 border-green-500">
-          <h1 className="text-xl font-bold text-green-700">[지역명] 대여소</h1>
+      <div className="w-full max-w-4xl bg-white p-6 rounded-lg shadow-lg text-black">
+        {/* 선택된 대여소 이름 표시 */}
+        <header className="bg-gray-200 p-4 rounded-lg shadow-md text-center border-2 border-green-500">
+          <h1 className="text-xl font-bold">{selectedStation}</h1>
         </header>
+
+        {/* 상단 정보 */}
         <div className="flex justify-around items-center py-6">
-          {/* 첫 번째 도넛 차트 */}
-          <div>
-            <DonutChart data={[70, 30]} colors={["#4caf50", "#3c3c3c"]} size={100} />
-          </div>
-          {/* 두 번째 도넛 차트 */}
-          <div>
-            <DonutChart data={[40, 60]} colors={["#ff9800", "#3c3c3c"]} size={100} />
-          </div>
+          {/* 거치대 수 */}
+          <DockInfo />
+          {/* 온도, 습도, 풍속 */}
           <div className="flex space-x-4">
-            <div className="border-2 border-green-500 bg-gray-100 p-3 rounded-lg w-24 text-center">
+            <div className="border-2 border-green-500 bg-gray-200 p-3 rounded-lg w-24 text-center">
               <p className="text-sm font-bold text-green-700">온도</p>
               <p className="text-lg font-semibold">{temperature}</p>
             </div>
-            <div className="border-2 border-green-500 bg-gray-100 p-3 rounded-lg w-24 text-center">
+            <div className="border-2 border-green-500 bg-gray-200 p-3 rounded-lg w-24 text-center">
               <p className="text-sm font-bold text-green-700">습도</p>
               <p className="text-lg font-semibold">{humidity}</p>
             </div>
-            <div className="border-2 border-green-500 bg-gray-100 p-3 rounded-lg w-24 text-center">
+            <div className="border-2 border-green-500 bg-gray-200 p-3 rounded-lg w-24 text-center">
               <p className="text-sm font-bold text-green-700">풍속</p>
               <p className="text-lg font-semibold">{windSpeed}</p>
             </div>
           </div>
+          {/* 날씨 아이콘 */}
           <div className="flex flex-col items-center">
-            <WeatherInfo imageSize="large" />
+            <img
+              src={`/${weather}.png`}
+              alt={weather}
+              className="w-36 h-36 object-contain"
+            />
           </div>
         </div>
-        <div className="mt-6">
-          <LineChart
-            data={mockBikeData}
-            lineColor="rgba(75, 192, 192, 1)"
-            pointColor="rgba(75, 192, 192, 1)"
-            width={1000}
-            height={400}
-          />
+
+        {/* 하단 그래프 및 리스트 */}
+        <div className="flex justify-between mt-6 space-x-6">
+          {/* 선 그래프 */}
+          <div className="w-2/3">
+            <LineChart
+              data={mockBikeData}
+              lineColor="rgba(40, 98, 94, 1)"
+              pointColor="rgba(40, 98, 94, 1)"
+            />
+          </div>
+          {/* 근처 대여소 리스트 */}
+          <RentalStationList />
         </div>
       </div>
     </div>
