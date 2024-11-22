@@ -1,18 +1,18 @@
 import React from "react";
 
 type WeatherIconProps = {
-    weather: "sunny" | "cloudy" | "rain"; // 가능한 옵션을 지정
-  };
-  
+  weather: "rain" | "sunny" | "cloudy"; // 타입 명시
+  className?: string; // 클래스명 설정
+};
 
-const WeatherIcon: React.FC<WeatherIconProps> = ({ weather }) => {
+const WeatherIcon: React.FC<WeatherIconProps> = ({ weather, className }) => {
   const weatherIcons: Record<string, string> = {
-    sunny: "public/Sunny.png",
-    cloudy: "public/Cloudy.png",
-    rain: "public/rain.png",
+    rain: "/rain.png",
+    sunny: "/Sunny.png",
+    cloudy: "/Cloudy.png",
   };
 
-  return <img src={weatherIcons[weather]} alt={weather} className="w-12 h-12" />;
+  return <img src={weatherIcons[weather]} alt={weather} className={className} />;
 };
 
 export default WeatherIcon;

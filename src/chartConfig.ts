@@ -1,23 +1,21 @@
 import {
   Chart as ChartJS,
   ArcElement,
+  LineElement,
   CategoryScale,
   LinearScale,
   PointElement,
-  LineElement,
   Tooltip,
   Legend,
 } from "chart.js";
 
-// Chart.js에서 사용하는 모든 요소와 플러그인을 등록
+// Chart.js 요소 및 스케일 등록
 ChartJS.register(
-  ArcElement, // Donut 차트에 필요한 arc 요소
-  CategoryScale, // 축 카테고리
-  LinearScale, // 선형 스케일
-  PointElement, // 포인트 요소
-  LineElement, // 선 요소
-  Tooltip, // 툴팁 표시
-  Legend // 범례 표시
+  ArcElement, // 도넛 차트
+  LineElement, // 선 차트
+  CategoryScale, // x축 카테고리 스케일
+  LinearScale, // y축 선형 스케일
+  PointElement, // 선 차트 점
+  Tooltip, // 툴팁
+  Legend // 범례
 );
-
-export default ChartJS;
