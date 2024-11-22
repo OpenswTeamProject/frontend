@@ -1,32 +1,32 @@
 import React, { useState } from "react";
 import ListComponent from "../components/ListComponent";
 
+type Station = {
+  station_id: number;
+  station_name: string;
+  region: string;
+  address: string;
+};
+
 const ListPage: React.FC = () => {
-  const [searchTerm, setSearchTerm] = useState<string>(""); // 검색어 상태
-  const [results, setResults] = useState<string[]>([]); // 검색 결과 상태
-  const [selectedItem, setSelectedItem] = useState<string | null>(null); // 선택된 항목 상태
-  const [hasSearched, setHasSearched] = useState<boolean>(false); // 검색 버튼 클릭 여부 상태
+  const [searchTerm, setSearchTerm] = useState<string>("");
+  const [results, setResults] = useState<Station[]>([]);
+  const [selectedItem, setSelectedItem] = useState<Station | null>(null);
 
-  const allData = [
-    "강남구 대여소 1",
-    "강남구 대여소 2",
-    "강남구 대여소 3",
-    "강남구 대여소 4",
-    "서초구 대여소 1",
-    "서초구 대여소 2",
-  ];
-
-  const handleSearch = () => {
-    setHasSearched(true);
-    const filteredData = allData.filter((item) =>
-      item.includes(searchTerm)
-    );
-    setResults(filteredData);
+  const handleSearch = async () => {
+    try {
+      const response = await fetch(`http://127.0.0.1:5000/stations?search=${encodeURIComponent(searchTerm)}`);
+      const data = await response.json();
+      setResults(data.stations);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
   };
+  
 
-  const handleSelectItem = (item: string) => {
-    setSelectedItem(item);
-    console.log(`Selected item: ${item}`);
+  const handleSelectItem = (item: Station) => {
+    setSelectedItem(item); // 선택된 항목 업데이트
+    console.log(`Selected station: ${item.station_name}`);
   };
 
   return (
@@ -50,14 +50,8 @@ const ListPage: React.FC = () => {
         </button>
       </div>
 
-      {/* 검색 결과 리스트 */}
-      {hasSearched && (
-        <ListComponent
-          results={results}
-          selectedItem={selectedItem}
-          onSelectItem={handleSelectItem}
-        />
-      )}
+      {/* 검색 결과 */}
+      <ListComponent results={results} selectedItem={selectedItem} onSelectItem={handleSelectItem} />
     </div>
   );
 };
