@@ -24,20 +24,38 @@ const Statistics: React.FC = () => {
     weatherIcon: string;
   } | null>(null);
 
-  const [forecastInfo, setForecastInfo] = useState<{
-    datetime: string;
-    temperature: number;
-    humidity: number;
-    windSpeed: number;
-    rainVolume: number;
-    description: string;
-    weatherIcon: string;
-  }[]>([]);
+  const [forecastInfo, setForecastInfo] = useState<
+    {
+      datetime: string;
+      temperature: number;
+      humidity: number;
+      windSpeed: number;
+      rainVolume: number;
+      snowVolume: number;
+      description: string;
+      weatherIcon: string;
+    }[]
+  >([]);
 
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
-  // 대여소 정보 가져오기
+  // 아이콘 맵핑 함수
+  const getWeatherIcon = (description: string): string => {
+    const iconMapping: Record<string, string> = {
+      "clear sky": "01d",
+      "few clouds": "02d",
+      "scattered clouds": "03d",
+      "broken clouds": "04d",
+      "shower rain": "09d",
+      rain: "10d",
+      thunderstorm: "11d",
+      snow: "13d",
+      mist: "50d",
+    };
+    return iconMapping[description.toLowerCase()] || "01d";
+  };
+
   useEffect(() => {
     const fetchStationInfo = async () => {
       try {
@@ -54,11 +72,10 @@ const Statistics: React.FC = () => {
         const data = await response.json();
         setStationInfo(data);
 
-        // 대여소 데이터가 성공적으로 로드되면 날씨 데이터 가져오기
+        // 날씨 데이터 가져오기
         if (data && data.nearby_stations.length > 0) {
-          const [lat, lon] = [37.5665, 126.9780]; // 예시 위도/경도 (서울)
-          fetchWeatherInfo(lat, lon); // 현재 날씨 데이터
-          fetchForecastInfo(lat, lon); // 5일 예보 데이터
+          const [lat, lon] = [37.5665, 126.9780]; // 예시 위도/경도
+          await Promise.all([fetchWeatherInfo(lat, lon), fetchForecastInfo(lat, lon)]);
         }
       } catch (err) {
         setError(err instanceof Error ? err.message : "알 수 없는 오류");
@@ -72,7 +89,6 @@ const Statistics: React.FC = () => {
     }
   }, [selectedStation]);
 
-  // 현재 날씨 데이터 가져오기
   const fetchWeatherInfo = async (lat: number, lon: number) => {
     try {
       const response = await fetch(
@@ -96,84 +112,66 @@ const Statistics: React.FC = () => {
     }
   };
 
-// 5일/3시간 날씨 예보 데이터 가져오기
-const fetchForecastInfo = async (lat: number, lon: number) => {
-  try {
-    const response = await fetch(
-      `http://localhost:5000/weather/forecast?lat=${lat}&lon=${lon}`
-    );
+  const fetchForecastInfo = async (lat: number, lon: number) => {
+    try {
+      const response = await fetch(
+        `http://localhost:5000/weather/forecast?lat=${lat}&lon=${lon}`
+      );
 
-    if (!response.ok) {
-      throw new Error("날씨 예보 API 호출 중 오류 발생");
-    }
-
-    const data = await response.json();
-
-    // description에 따라 아이콘 설정 함수
-    const getWeatherIcon = (description: string) => {
-      const iconMapping: Record<string, string> = {
-        "clear sky": "01d", // 맑은 하늘
-        "few clouds": "02d", // 약간의 구름
-        "scattered clouds": "03d", // 흩어진 구름
-        "broken clouds": "04d", // 부서진 구름
-        "shower rain": "09d", // 소나기
-        rain: "10d", // 비
-        thunderstorm: "11d", // 뇌우
-        snow: "13d", // 눈
-        mist: "50d", // 안개
-      };
-
-      // description에 해당하는 아이콘 코드 반환, 기본값은 '01d'
-      return iconMapping[description.toLowerCase()] || "01d";
-    };
-
-    // datetime을 기준으로 데이터 병합
-    const mergedData: Record<string, any> = {};
-    data.forEach((forecast: any) => {
-      const datetime = forecast.datetime.split(" ")[0]; // 날짜별 그룹화
-
-      if (!mergedData[datetime]) {
-        mergedData[datetime] = {
-          datetime,
-          temperature: forecast.temperature,
-          humidity: forecast.humidity,
-          windSpeed: forecast.wind_speed,
-          rainVolume: forecast.rainVolume || 0,
-          description: forecast.description,
-          weatherIcon: `http://openweathermap.org/img/wn/${getWeatherIcon(
-            forecast.description
-          )}@2x.png`, // description에 따라 아이콘 설정
-          count: 1,
-        };
-      } else {
-        mergedData[datetime].temperature += forecast.temperature;
-        mergedData[datetime].humidity += forecast.humidity;
-        mergedData[datetime].windSpeed += forecast.wind_speed;
-        mergedData[datetime].rainVolume += forecast.rainVolume || 0;
-        mergedData[datetime].count += 1;
+      if (!response.ok) {
+        throw new Error("날씨 예보 API 호출 중 오류 발생");
       }
-    });
 
-    // 평균값 계산 및 첫날 제외
-    const averagedForecasts = Object.values(mergedData)
-      .map((item: any) => ({
-        datetime: item.datetime,
-        temperature: (item.temperature / item.count).toFixed(1),
-        humidity: (item.humidity / item.count).toFixed(1),
-        windSpeed: (item.windSpeed / item.count).toFixed(1),
-        rainVolume: item.rainVolume.toFixed(1),
-        description: item.description,
-        weatherIcon: item.weatherIcon, // description 기반 아이콘
-      }))
-      .slice(1, 5); // 첫날 제외하고 최대 4일만 선택
+      const data = await response.json();
 
-    setForecastInfo(averagedForecasts);
-  } catch (err) {
-    setError(err instanceof Error ? err.message : "알 수 없는 오류");
-  }
-};
+      // 데이터 병합
+      const mergedData: Record<string, any> = {};
+      data.forEach((forecast: any) => {
+        const datetime = forecast.datetime.split(" ")[0];
 
+        if (!mergedData[datetime]) {
+          mergedData[datetime] = {
+            datetime,
+            temperature: forecast.temperature,
+            humidity: forecast.humidity,
+            windSpeed: forecast.wind_speed,
+            rainVolume: forecast.rainVolume || 0,
+            snowVolume: forecast.snowVolume || 0,
+            description: forecast.description,
+            weatherIcon: `http://openweathermap.org/img/wn/${getWeatherIcon(
+              forecast.description
+            )}@2x.png`,
+            count: 1,
+          };
+        } else {
+          mergedData[datetime].temperature += forecast.temperature;
+          mergedData[datetime].humidity += forecast.humidity;
+          mergedData[datetime].windSpeed += forecast.wind_speed;
+          mergedData[datetime].rainVolume += forecast.rainVolume || 0;
+          mergedData[datetime].snowVolume += forecast.snowVolume || 0;
+          mergedData[datetime].count += 1;
+        }
+      });
 
+      // 평균값 계산
+      const averagedForecasts = Object.values(mergedData)
+        .map((item: any) => ({
+          datetime: item.datetime,
+          temperature: parseFloat((item.temperature / item.count).toFixed(1)),
+          humidity: parseFloat((item.humidity / item.count).toFixed(1)),
+          windSpeed: parseFloat((item.windSpeed / item.count).toFixed(1)),
+          rainVolume: parseFloat(item.rainVolume.toFixed(1)),
+          snowVolume: parseFloat(item.snowVolume.toFixed(1)),
+          description: item.description,
+          weatherIcon: item.weatherIcon,
+        }))
+        .slice(1, 5); // 첫날 제외
+
+      setForecastInfo(averagedForecasts);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "알 수 없는 오류");
+    }
+  };
 
   if (loading) {
     return <div className="text-white">로딩 중...</div>;
@@ -202,7 +200,6 @@ const fetchForecastInfo = async (lat: number, lon: number) => {
         {/* 상단 정보 */}
         <div className="flex justify-around items-center py-6">
           <DockInfo totalSlots={stationInfo.total_slots} />
-          {/* 날씨 정보 */}
           <div className="flex space-x-4">
             <div className="border-2 border-green-500 bg-gray-200 p-3 rounded-lg w-24 text-center">
               <p className="text-sm font-bold text-green-700">온도</p>
@@ -217,7 +214,6 @@ const fetchForecastInfo = async (lat: number, lon: number) => {
               <p className="text-lg font-semibold">{weatherInfo.windSpeed} m/s</p>
             </div>
           </div>
-          {/* 날씨 아이콘 */}
           <div className="flex flex-col items-center">
             <img
               src={weatherInfo.weatherIcon}
@@ -256,6 +252,7 @@ const fetchForecastInfo = async (lat: number, lon: number) => {
                 <p className="text-sm">습도: {forecast.humidity}%</p>
                 <p className="text-sm">풍속: {forecast.windSpeed} m/s</p>
                 <p className="text-sm">강수량: {forecast.rainVolume} mm</p>
+                <p className="text-sm">강설량: {forecast.snowVolume} mm</p>
               </div>
             ))}
           </div>
