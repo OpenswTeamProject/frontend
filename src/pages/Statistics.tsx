@@ -2,8 +2,8 @@ import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import DockInfo from "../components/DockInfo";
 import RentalStationList from "../components/RentalStationList";
-import LineChart from "../components/LineChart";
-import { mockWeatherData } from "../api/mockWeatherData";
+import BikeDemandGraph from "../components/BikeDemandGraph";
+import { mockWeatherData } from "../api/mockWeatherData"; // 날씨 데이터 가져오기
 
 const Statistics: React.FC = () => {
   const location = useLocation();
@@ -18,6 +18,7 @@ const Statistics: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
+  // Mock 날씨 데이터
   const { temperature, humidity, windSpeed, weather } = mockWeatherData;
 
   useEffect(() => {
@@ -59,24 +60,6 @@ const Statistics: React.FC = () => {
     return <div className="text-gray-400">대여소 정보를 불러올 수 없습니다.</div>;
   }
 
-  // Chart.js 데이터 형식으로 변환 (안전 초기화)
-  const chartData = {
-    labels: stationInfo.nearby_stations
-      ? stationInfo.nearby_stations.map((station) => station.station_name)
-      : [],
-    datasets: [
-      {
-        label: "거치대 수",
-        data: stationInfo.nearby_stations
-          ? stationInfo.nearby_stations.map((station) => station.total_slots)
-          : [],
-        backgroundColor: "rgba(40, 98, 94, 0.2)",
-        borderColor: "rgba(40, 98, 94, 1)",
-        borderWidth: 1,
-      },
-    ],
-  };
-
   return (
     <div
       className="min-h-screen bg-gray-800 flex flex-col items-center justify-center text-white"
@@ -85,7 +68,6 @@ const Statistics: React.FC = () => {
       }}
     >
       <div className="w-full max-w-4xl bg-white p-6 rounded-lg shadow-lg text-black">
-        {/* 선택된 대여소 이름 표시 */}
         <header className="bg-gray-200 p-4 rounded-lg shadow-md text-center border-2 border-green-500">
           <h1 className="text-xl font-bold">{stationInfo.station_name}</h1>
         </header>
@@ -93,6 +75,7 @@ const Statistics: React.FC = () => {
         {/* 상단 정보 */}
         <div className="flex justify-around items-center py-6">
           <DockInfo totalSlots={stationInfo.total_slots} />
+          {/* 날씨 정보 */}
           <div className="flex space-x-4">
             <div className="border-2 border-green-500 bg-gray-200 p-3 rounded-lg w-24 text-center">
               <p className="text-sm font-bold text-green-700">온도</p>
@@ -107,9 +90,10 @@ const Statistics: React.FC = () => {
               <p className="text-lg font-semibold">{windSpeed}</p>
             </div>
           </div>
+          {/* 날씨 아이콘 */}
           <div className="flex flex-col items-center">
             <img
-              src={`/${weather}.png`}
+              src={`/${weather}.png`} // 날씨 이미지 경로
               alt={weather}
               className="w-36 h-36 object-contain"
             />
@@ -118,9 +102,9 @@ const Statistics: React.FC = () => {
 
         {/* 하단 그래프 및 리스트 */}
         <div className="flex justify-between mt-6 space-x-6">
-          {/* 선 그래프 */}
+          {/* 자전거 수요량 그래프 */}
           <div className="w-2/3">
-            <LineChart data={chartData} />
+            <BikeDemandGraph />
           </div>
           {/* 근처 대여소 리스트 */}
           <RentalStationList stations={stationInfo.nearby_stations} />
