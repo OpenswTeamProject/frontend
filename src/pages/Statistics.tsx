@@ -109,6 +109,24 @@ const fetchForecastInfo = async (lat: number, lon: number) => {
 
     const data = await response.json();
 
+    // description에 따라 아이콘 설정 함수
+    const getWeatherIcon = (description: string) => {
+      const iconMapping: Record<string, string> = {
+        "clear sky": "01d", // 맑은 하늘
+        "few clouds": "02d", // 약간의 구름
+        "scattered clouds": "03d", // 흩어진 구름
+        "broken clouds": "04d", // 부서진 구름
+        "shower rain": "09d", // 소나기
+        rain: "10d", // 비
+        thunderstorm: "11d", // 뇌우
+        snow: "13d", // 눈
+        mist: "50d", // 안개
+      };
+
+      // description에 해당하는 아이콘 코드 반환, 기본값은 '01d'
+      return iconMapping[description.toLowerCase()] || "01d";
+    };
+
     // datetime을 기준으로 데이터 병합
     const mergedData: Record<string, any> = {};
     data.forEach((forecast: any) => {
@@ -122,7 +140,9 @@ const fetchForecastInfo = async (lat: number, lon: number) => {
           windSpeed: forecast.wind_speed,
           rainVolume: forecast.rainVolume || 0,
           description: forecast.description,
-          weatherIcon: `http://openweathermap.org/img/wn/${forecast.icon || '01d'}@2x.png`, // 아이콘 추가
+          weatherIcon: `http://openweathermap.org/img/wn/${getWeatherIcon(
+            forecast.description
+          )}@2x.png`, // description에 따라 아이콘 설정
           count: 1,
         };
       } else {
@@ -143,7 +163,7 @@ const fetchForecastInfo = async (lat: number, lon: number) => {
         windSpeed: (item.windSpeed / item.count).toFixed(1),
         rainVolume: item.rainVolume.toFixed(1),
         description: item.description,
-        weatherIcon: item.weatherIcon, // 아이콘 추가
+        weatherIcon: item.weatherIcon, // description 기반 아이콘
       }))
       .slice(1, 5); // 첫날 제외하고 최대 4일만 선택
 
@@ -152,6 +172,7 @@ const fetchForecastInfo = async (lat: number, lon: number) => {
     setError(err instanceof Error ? err.message : "알 수 없는 오류");
   }
 };
+
 
 
   if (loading) {
