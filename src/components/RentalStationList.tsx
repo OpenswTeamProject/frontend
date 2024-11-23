@@ -1,21 +1,24 @@
 import React from "react";
 
-const RentalStationList: React.FC = () => { //대여소 하드코딩
-  const stations = [
-    "역삼역 3번 출구",
-    "강남역 5번 출구",
-    "선릉역 2번 출구",
-    "양재역 6번 출구",
-    "역삼역 3번 출구 - 추가 정보",
-    "강남역 5번 출구 - 추가 정보",
-    "선릉역 2번 출구 - 추가 정보",
-    "양재역 6번 출구 - 추가 정보",
-  ];
+interface RentalStationListProps {
+  stations?: { station_name: string; total_slots: number }[]; // 대여소 데이터 배열 (optional)
+}
+
+const RentalStationList: React.FC<RentalStationListProps> = ({ stations = [] }) => {
+  if (stations.length === 0) {
+    return (
+      <div className="border-2 border-green-500 bg-gray-100 rounded-lg w-1/3 p-4">
+        <div className="text-center font-bold text-gray-500">
+          근처 대여소가 없습니다.
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="border-2 border-green-500 bg-gray-100 rounded-lg w-1/3">
       {/* 제목 */}
-      <div className="bg-gray-200 p-2 border-b-2 border-green-500 text-center font-bold  sticky top-0">
+      <div className="bg-gray-200 p-2 border-b-2 border-green-500 text-center font-bold sticky top-0">
         근처 대여소 정보
       </div>
       {/* 스크롤 가능한 리스트 */}
@@ -30,7 +33,8 @@ const RentalStationList: React.FC = () => { //대여소 하드코딩
             key={index}
             className="bg-gray-200 p-2 rounded-lg mb-2 shadow-md hover:bg-green-100"
           >
-            {station}
+            <p className="font-bold">{station.station_name}</p>
+            <p className="text-sm text-gray-600">거치대 수: {station.total_slots}</p>
           </div>
         ))}
       </div>

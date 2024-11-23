@@ -4,29 +4,36 @@ import ListComponent from "../components/ListComponent";
 const ListPage: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState<string>(""); // 검색어 상태
   const [results, setResults] = useState<string[]>([]); // 검색 결과 상태
-  const [selectedItem, setSelectedItem] = useState<string | null>(null); // 선택된 항목 상태
   const [hasSearched, setHasSearched] = useState<boolean>(false); // 검색 버튼 클릭 여부 상태
+  const [loading, setLoading] = useState<boolean>(false); // 로딩 상태
+  const [error, setError] = useState<string | null>(null); // 에러 상태
 
-  const allData = [
-    "강남구 대여소 1",
-    "강남구 대여소 2",
-    "강남구 대여소 3",
-    "강남구 대여소 4",
-    "서초구 대여소 1",
-    "서초구 대여소 2",
-  ];
-
-  const handleSearch = () => {
+  const handleSearch = async () => {
     setHasSearched(true);
-    const filteredData = allData.filter((item) =>
-      item.includes(searchTerm)
-    );
-    setResults(filteredData);
+    setError(null);
+    setResults([]);
+    setLoading(true);
+
+    try {
+      const response = await fetch(
+        `http://localhost:5000/stations?search=${encodeURIComponent(searchTerm)}`
+      );
+
+      if (!response.ok) {
+        throw new Error("검색 결과를 가져오는 중 문제가 발생했습니다.");
+      }
+
+      const data = await response.json();
+      setResults(data.stations.map((station: any) => station.station_name)); // 대여소 이름만 추출
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "알 수 없는 에러");
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleSelectItem = (item: string) => {
-    setSelectedItem(item);
-    console.log(`Selected item: ${item}`);
+    console.log(`Selected item: ${item}`); // 선택된 대여소 확인용
   };
 
   return (
@@ -50,11 +57,17 @@ const ListPage: React.FC = () => {
         </button>
       </div>
 
+      {/* 로딩 상태 */}
+      {loading && <p className="text-gray-400">로딩 중...</p>}
+
+      {/* 에러 메시지 */}
+      {error && <p className="text-red-500">{error}</p>}
+
       {/* 검색 결과 리스트 */}
       {hasSearched && (
         <ListComponent
           results={results}
-          selectedItem={selectedItem}
+          selectedItem={null}
           onSelectItem={handleSelectItem}
         />
       )}

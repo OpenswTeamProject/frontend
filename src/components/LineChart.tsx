@@ -1,33 +1,56 @@
 import React from "react";
 import { Line } from "react-chartjs-2";
-import "../chartConfig";
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend,
+} from "chart.js";
 
-type LineChartProps = {
-  data: any;
-  lineColor: string;
-  pointColor: string;
-};
+// Chart.js에서 필요한 요소 등록
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend
+);
 
-const LineChart: React.FC<LineChartProps> = ({ data, lineColor, pointColor }) => {
+interface LineChartProps {
+  data: {
+    labels: string[];
+    datasets: {
+      label: string;
+      data: number[];
+      backgroundColor: string;
+      borderColor: string;
+      borderWidth: number;
+    }[];
+  };
+}
+
+const LineChart: React.FC<LineChartProps> = ({ data }) => {
   const options = {
     responsive: true,
     plugins: {
-      legend: { display: false },
-    },
-    elements: {
-      line: {
-        borderWidth: 2,
-        borderColor: lineColor,
-        tension: 0.4,
-      },
-      point: {
-        radius: 5,
-        backgroundColor: pointColor,
+      legend: {
+        display: true,
+        position: "top" as const,
       },
     },
     scales: {
-      x: { grid: { display: false } },
-      y: { grid: { color: "rgba(200, 200, 200, 0.5)" } },
+      x: {
+        beginAtZero: true,
+      },
+      y: {
+        beginAtZero: true,
+      },
     },
   };
 
