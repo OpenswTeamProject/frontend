@@ -4,8 +4,6 @@ import DockInfo from "../components/DockInfo";
 import RentalStationList from "../components/RentalStationList";
 import BikeDemandGraph from "../components/BikeDemandGraph";
 
-const OPENWEATHER_API_KEY = "b185176d52c5df5dd2b8d5ed23d1a75c"; // OpenWeather API 키 입력
-
 const Statistics: React.FC = () => {
   const location = useLocation();
   const selectedStation = location.state?.selectedStation || "대여소 정보 없음";
@@ -92,26 +90,25 @@ const Statistics: React.FC = () => {
   const fetchWeatherInfo = async (lat: number, lon: number) => {
     try {
       const response = await fetch(
-        `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${OPENWEATHER_API_KEY}&units=metric`
-      );
-
+        `http://localhost:5000/weather/current?lat=${lat}&lon=${lon}`
+      ); // 백엔드의 현재 날씨 API 경로
+  
       if (!response.ok) {
-        throw new Error("날씨 API 호출 중 오류 발생");
+        throw new Error("백엔드 API 호출 중 오류 발생");
       }
-
+  
       const data = await response.json();
       setWeatherInfo({
-        temperature: data.main.temp,
-        humidity: data.main.humidity,
-        windSpeed: data.wind.speed,
-        description: data.weather[0].description,
-        weatherIcon: `http://openweathermap.org/img/wn/${data.weather[0].icon}@2x.png`,
+        temperature: data.temperature,
+        humidity: data.humidity,
+        windSpeed: data.wind_speed,
+        description: data.description,
+        weatherIcon: data.weather_icon, // 백엔드에서 아이콘 포함
       });
     } catch (err) {
       setError(err instanceof Error ? err.message : "알 수 없는 오류");
     }
   };
-
   const fetchForecastInfo = async (lat: number, lon: number) => {
     try {
       const response = await fetch(
