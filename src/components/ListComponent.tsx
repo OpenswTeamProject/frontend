@@ -21,7 +21,12 @@ const ListComponent: React.FC<ListComponentProps> = ({
       {results.map((item, index) => (
         <Link
           key={index}
-          to={`/details/${encodeURIComponent(item)}`} // 링크 경로 설정
+
+          to="/statistics" // 통계 페이지로 이동
+          state={{ selectedStation: item }} // 선택된 항목 데이터 전달
+
+          
+
           onClick={() => onSelectItem(item)} // 선택된 항목 상태 업데이트
           className={`block p-3 mb-2 rounded-lg text-left cursor-pointer focus:outline-none ${
             selectedItem === item
