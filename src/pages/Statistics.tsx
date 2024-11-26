@@ -58,7 +58,7 @@ const Statistics: React.FC = () => {
     const fetchStationInfo = async () => {
       try {
         const response = await fetch(
-          `http://localhost:5000/stations/station_info?station=${encodeURIComponent(
+          `http://172.20.10.2:5000/stations/station_info?station=${encodeURIComponent(
             selectedStation
           )}`
         );
@@ -72,7 +72,7 @@ const Statistics: React.FC = () => {
 
         // 날씨 데이터 가져오기
         if (data && data.nearby_stations.length > 0) {
-          const [lat, lon] = [37.5665, 126.9780]; // 예시 위도/경도
+          const [lat, lon] = [data.latitude, data.longitude]; // 예시 위도/경도
           await Promise.all([fetchWeatherInfo(lat, lon), fetchForecastInfo(lat, lon)]);
         }
       } catch (err) {
@@ -90,7 +90,7 @@ const Statistics: React.FC = () => {
   const fetchWeatherInfo = async (lat: number, lon: number) => {
     try {
       const response = await fetch(
-        `http://localhost:5000/weather/current?lat=${lat}&lon=${lon}`
+        `http://172.20.10.2:5000/weather/current?lat=${lat}&lon=${lon}`
       ); // 백엔드의 현재 날씨 API 경로
   
       if (!response.ok) {
@@ -112,7 +112,7 @@ const Statistics: React.FC = () => {
   const fetchForecastInfo = async (lat: number, lon: number) => {
     try {
       const response = await fetch(
-        `http://localhost:5000/weather/forecast?lat=${lat}&lon=${lon}`
+        `http://172.20.10.2:5000/weather/forecast?lat=${lat}&lon=${lon}`
       );
 
       if (!response.ok) {
