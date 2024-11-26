@@ -5,6 +5,7 @@ const ListPage: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState<string>(""); // 검색어 상태
   const [results, setResults] = useState<string[]>([]); // 검색 결과 상태
   const [hasSearched, setHasSearched] = useState<boolean>(false); // 검색 버튼 클릭 여부 상태
+
   const [loading, setLoading] = useState<boolean>(false); // 로딩 상태
   const [error, setError] = useState<string | null>(null); // 에러 상태
 
@@ -34,6 +35,7 @@ const ListPage: React.FC = () => {
 
   const handleSelectItem = (item: string) => {
     console.log(`Selected item: ${item}`); // 선택된 대여소 확인용
+
   };
 
   return (
@@ -57,17 +59,21 @@ const ListPage: React.FC = () => {
         </button>
       </div>
 
+
       {/* 로딩 상태 */}
       {loading && <p className="text-gray-400">로딩 중...</p>}
 
       {/* 에러 메시지 */}
       {error && <p className="text-red-500">{error}</p>}
 
+
       {/* 검색 결과 리스트 */}
       {hasSearched && (
         <ListComponent
           results={results}
+
           selectedItem={null}
+
           onSelectItem={handleSelectItem}
         />
       )}
