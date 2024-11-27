@@ -224,7 +224,7 @@ const Statistics: React.FC = () => {
         {/* 하단 그래프 및 리스트 */}
         <div className="flex justify-between mt-6 space-x-6">
           <div className="w-2/3">
-            <BikeDemandGraph />
+          <BikeDemandGraph station={selectedStation} />
           </div>
           <RentalStationList stations={stationInfo.nearby_stations} />
         </div>
