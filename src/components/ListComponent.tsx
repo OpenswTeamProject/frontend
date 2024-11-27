@@ -17,7 +17,7 @@ const ListComponent: React.FC<ListComponentProps> = ({
   }
 
   return (
-    <div className="mt-8 bg-gray-100 rounded-lg p-4 w-full max-w-md border border-green-500">
+    <div className="mt-8 bg-gray-100 rounded-lg p-4 w-full max-w-md border border-green-500 h-64 overflow-y-auto">
       {results.map((item, index) => (
         <Link
           key={index}

@@ -17,49 +17,57 @@ const Login: React.FC = () => {
   };
 
   return (
-    <div
-      className="flex items-center justify-center w-screen h-screen bg-cover bg-center"
-      style={{
-        backgroundImage: "url('/LoginBack.png')", // 이미지 경로를 확인하세요
-      }}
-    >
-      <div className="bg-gray-800 bg-opacity-80 p-8 rounded-lg shadow-md w-full max-w-sm">
-        <h1 className="text-2xl font-bold text-white text-center mb-6">로그인</h1>
-        <form className="space-y-4" onSubmit={handleLogin}>
-          {error && <p className="text-red-500 text-sm">{error}</p>} {/* 에러 메시지 */}
-          <div>
-            <label htmlFor="username" className="sr-only">
-              아이디
-            </label>
-            <input
-              type="text"
-              id="username"
-              value={username} // 상태와 연결
-              onChange={(e) => setUsername(e.target.value)} // 상태 업데이트
-              placeholder="아이디"
-              className="w-full px-4 py-2 border rounded-lg bg-gray-50 focus:outline-none focus:ring-2 focus:ring-green-400"
-            />
+    <div className="flex items-center justify-center w-screen h-screen">
+      <div className="grid grid-cols-2 w-full h-full">
+        {/* Left Section with Login Form */}
+        <div className="flex items-center justify-center" style={{ backgroundColor: '#2E3440' }}>
+          <div className="p-8 rounded-lg w-full max-w-sm" style={{ backgroundColor: '#4A5568' }}> {/* 회색 배경 */}
+            <h1 className="text-2xl font-bold text-white text-center mb-6">로그인</h1> {/* 텍스트 색 변경 */}
+            <form className="space-y-4" onSubmit={handleLogin}>
+              {error && <p className="text-red-500 text-sm">{error}</p>} {/* 에러 메시지 */}
+              <div>
+                <label htmlFor="username" className="sr-only">
+                  아이디
+                </label>
+                <input
+                  type="text"
+                  id="username"
+                  value={username} // 상태와 연결
+                  onChange={(e) => setUsername(e.target.value)} // 상태 업데이트
+                  placeholder="아이디"
+                  className="w-full px-4 py-2 border rounded-lg bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-green-400"
+                />
+              </div>
+              <div>
+                <label htmlFor="password" className="sr-only">
+                  비밀번호
+                </label>
+                <input
+                  type="password"
+                  id="password"
+                  value={password} // 상태와 연결
+                  onChange={(e) => setPassword(e.target.value)} // 상태 업데이트
+                  placeholder="비밀번호"
+                  className="w-full px-4 py-2 border rounded-lg bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-green-400"
+                />
+              </div>
+              <button
+                type="submit"
+                className="w-full py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors"
+              >
+                로그인
+              </button>
+            </form>
           </div>
-          <div>
-            <label htmlFor="password" className="sr-only">
-              비밀번호
-            </label>
-            <input
-              type="password"
-              id="password"
-              value={password} // 상태와 연결
-              onChange={(e) => setPassword(e.target.value)} // 상태 업데이트
-              placeholder="비밀번호"
-              className="w-full px-4 py-2 border rounded-lg bg-gray-50 focus:outline-none focus:ring-2 focus:ring-green-400"
-            />
-          </div>
-          <button
-            type="submit"
-            className="w-full py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors"
-          >
-            로그인
-          </button>
-        </form>
+        </div>
+
+        {/* Right Section with Background Image */}
+        <div
+          className="bg-cover bg-center"
+          style={{
+            backgroundImage: "url('/LoginBack.png')", // 이미지 경로 확인 필요
+          }}
+        ></div>
       </div>
     </div>
   );
