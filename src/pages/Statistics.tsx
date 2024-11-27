@@ -132,8 +132,8 @@ const Statistics: React.FC = () => {
             temperature: forecast.temperature,
             humidity: forecast.humidity,
             windSpeed: forecast.wind_speed,
-            rainVolume: forecast.rainVolume || 0,
-            snowVolume: forecast.snowVolume || 0,
+            rainVolume: forecast.rain_volume || 0,
+            snowVolume: forecast.snow_volume || 0,
             description: forecast.description,
             weatherIcon: `http://openweathermap.org/img/wn/${getWeatherIcon(
               forecast.description
