@@ -24,13 +24,13 @@ ChartJS.register(
 
 const BikeDemandGraph: React.FC<{ station: string }> = ({ station }) => {
   const [labels, setLabels] = useState<string[]>(["그제", "어제", "오늘", "내일", "모레"]);
-  const [data, setData] = useState<number[]>([20, 35, 50, 40, 60]);
+  const [data, setData] = useState<number[]>([]);
   const [error, setError] = useState<string | null>(null);
 
   const fetchPredictedData = async () => {
     try {
       const response = await fetch(
-        `http://172.20.10.13:5000/predict?station=${encodeURIComponent(station)}`,
+        `http://172.20.10.2:5000/predict?station=${encodeURIComponent(station)}`,
         {
           method: "POST", // 서버가 POST를 요구한다면
           headers: {
