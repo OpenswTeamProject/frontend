@@ -35,7 +35,6 @@ const ListPage: React.FC = () => {
 
   const handleSelectItem = (item: string) => {
     console.log(`Selected item: ${item}`); // 선택된 대여소 확인용
-
   };
 
   return (
@@ -43,7 +42,13 @@ const ListPage: React.FC = () => {
       <h1 className="text-3xl font-bold mb-8">대여소 리스트</h1>
 
       {/* 검색창 */}
-      <div className="relative w-full max-w-md">
+      <form
+        onSubmit={(e) => {
+          e.preventDefault(); // 폼 기본 제출 동작 방지
+          handleSearch(); // 검색 실행
+        }}
+        className="relative w-full max-w-md"
+      >
         <input
           type="text"
           value={searchTerm}
@@ -52,13 +57,12 @@ const ListPage: React.FC = () => {
           className="w-full p-3 rounded-full border border-green-500 bg-gray-200 text-black focus:outline-none"
         />
         <button
-          onClick={handleSearch}
-          className="absolute right-2 top-2 bg-green-500 text-white px-4 py-2 rounded-full hover:bg-green-600"
+          type="submit" // Enter 키로도 동작하도록 설정
+          className="absolute right-1 top-1/2 transform -translate-y-1/2 bg-green-500 text-white px-5 py-2 rounded-full hover:bg-green-600"
         >
           검색
         </button>
-      </div>
-
+      </form>
 
       {/* 로딩 상태 */}
       {loading && <p className="text-gray-400">로딩 중...</p>}
@@ -66,14 +70,11 @@ const ListPage: React.FC = () => {
       {/* 에러 메시지 */}
       {error && <p className="text-red-500">{error}</p>}
 
-
       {/* 검색 결과 리스트 */}
       {hasSearched && (
         <ListComponent
           results={results}
-
           selectedItem={null}
-
           onSelectItem={handleSelectItem}
         />
       )}
