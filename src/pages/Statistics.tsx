@@ -3,6 +3,9 @@ import { useLocation } from "react-router-dom";
 import DockInfo from "../components/DockInfo";
 import RentalStationList from "../components/RentalStationList";
 import BikeDemandGraph from "../components/BikeDemandGraph";
+import Map from "../components/Map";
+import "leaflet/dist/leaflet.css";
+
 
 const Statistics: React.FC = () => {
   const location = useLocation();
@@ -11,6 +14,8 @@ const Statistics: React.FC = () => {
   const [stationInfo, setStationInfo] = useState<{
     station_name: string;
     total_slots: number;
+    latitude: number;
+    longitude: number;
     nearby_stations: { station_name: string; total_slots: number }[];
   } | null>(null);
 
@@ -38,7 +43,6 @@ const Statistics: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
-  // 아이콘 맵핑 함수
   const getWeatherIcon = (description: string): string => {
     const iconMapping: Record<string, string> = {
       "clear sky": "01d",
@@ -58,7 +62,7 @@ const Statistics: React.FC = () => {
     const fetchStationInfo = async () => {
       try {
         const response = await fetch(
-          `http://172.20.10.2:5000//stations/station_info?station=${encodeURIComponent(
+          `http://localhost:5000/stations/station_info?station=${encodeURIComponent(
             selectedStation
           )}`
         );
@@ -70,10 +74,8 @@ const Statistics: React.FC = () => {
         const data = await response.json();
         setStationInfo(data);
 
-        // 날씨 데이터 가져오기
-        if (data && data.nearby_stations.length > 0) {
-          const [lat, lon] = [data.latitude, data.longitude]; // 예시 위도/경도
-          await Promise.all([fetchWeatherInfo(lat, lon), fetchForecastInfo(lat, lon)]);
+        if (data && data.latitude && data.longitude) {
+          await Promise.all([fetchWeatherInfo(data.latitude, data.longitude), fetchForecastInfo(data.latitude, data.longitude)]);
         }
       } catch (err) {
         setError(err instanceof Error ? err.message : "알 수 없는 오류");
@@ -90,29 +92,30 @@ const Statistics: React.FC = () => {
   const fetchWeatherInfo = async (lat: number, lon: number) => {
     try {
       const response = await fetch(
-        `http://172.20.10.2:5000//weather/current?lat=${lat}&lon=${lon}`
-      ); // 백엔드의 현재 날씨 API 경로
-  
+        `http://localhost:5000/weather/current?lat=${lat}&lon=${lon}`
+      );
+
       if (!response.ok) {
-        throw new Error("백엔드 API 호출 중 오류 발생");
+        throw new Error("날씨 API 호출 중 오류 발생");
       }
-  
+
       const data = await response.json();
       setWeatherInfo({
         temperature: data.temperature,
         humidity: data.humidity,
         windSpeed: data.wind_speed,
         description: data.description,
-        weatherIcon: data.weather_icon, // 백엔드에서 아이콘 포함
+        weatherIcon: data.weather_icon,
       });
     } catch (err) {
       setError(err instanceof Error ? err.message : "알 수 없는 오류");
     }
   };
+
   const fetchForecastInfo = async (lat: number, lon: number) => {
     try {
       const response = await fetch(
-        `http://172.20.10.2:5000/weather/forecast?lat=${lat}&lon=${lon}`
+        `http://localhost:5000/weather/forecast?lat=${lat}&lon=${lon}`
       );
 
       if (!response.ok) {
@@ -120,8 +123,6 @@ const Statistics: React.FC = () => {
       }
 
       const data = await response.json();
-
-      // 데이터 병합
       const mergedData: Record<string, any> = {};
       data.forEach((forecast: any) => {
         const datetime = forecast.datetime.split(" ")[0];
@@ -150,7 +151,6 @@ const Statistics: React.FC = () => {
         }
       });
 
-      // 평균값 계산
       const averagedForecasts = Object.values(mergedData)
         .map((item: any) => ({
           datetime: item.datetime,
@@ -162,7 +162,7 @@ const Statistics: React.FC = () => {
           description: item.description,
           weatherIcon: item.weatherIcon,
         }))
-        .slice(1, 5); // 첫날 제외
+        .slice(1, 5);
 
       setForecastInfo(averagedForecasts);
     } catch (err) {
@@ -194,7 +194,6 @@ const Statistics: React.FC = () => {
           <h1 className="text-xl font-bold">{stationInfo.station_name}</h1>
         </header>
 
-        {/* 상단 정보 */}
         <div className="flex justify-around items-center py-6">
           <DockInfo totalSlots={stationInfo.total_slots} />
           <div className="flex space-x-4">
@@ -221,15 +220,20 @@ const Statistics: React.FC = () => {
           </div>
         </div>
 
-        {/* 하단 그래프 및 리스트 */}
+        {stationInfo.latitude && stationInfo.longitude && ( //지도
+          <div className="my-8">
+            <h2 className="text-xl font-bold text-center mb-4">대여소 위치</h2>
+            <Map latitude={stationInfo.latitude} longitude={stationInfo.longitude} />
+          </div>
+        )}
+
         <div className="flex justify-between mt-6 space-x-6">
           <div className="w-2/3">
-          <BikeDemandGraph station={selectedStation} />
+            <BikeDemandGraph station={selectedStation} />
           </div>
           <RentalStationList stations={stationInfo.nearby_stations} />
         </div>
 
-        {/* 5일/3시간 날씨 예보 */}
         <div className="mt-8 bg-gray-100 p-6 rounded-lg">
           <h2 className="text-xl font-bold text-center mb-4">4일간 날씨 예보</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
