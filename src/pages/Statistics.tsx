@@ -58,7 +58,7 @@ const Statistics: React.FC = () => {
     const fetchStationInfo = async () => {
       try {
         const response = await fetch(
-          `http://172.20.10.2:5000//stations/station_info?station=${encodeURIComponent(
+          `http://localhost:5000//stations/station_info?station=${encodeURIComponent(
             selectedStation
           )}`
         );
@@ -90,7 +90,7 @@ const Statistics: React.FC = () => {
   const fetchWeatherInfo = async (lat: number, lon: number) => {
     try {
       const response = await fetch(
-        `http://172.20.10.2:5000//weather/current?lat=${lat}&lon=${lon}`
+        `http://localhost:5000//weather/current?lat=${lat}&lon=${lon}`
       ); // 백엔드의 현재 날씨 API 경로
   
       if (!response.ok) {
@@ -112,7 +112,7 @@ const Statistics: React.FC = () => {
   const fetchForecastInfo = async (lat: number, lon: number) => {
     try {
       const response = await fetch(
-        `http://172.20.10.2:5000/weather/forecast?lat=${lat}&lon=${lon}`
+        `http://localhost:5000/weather/forecast?lat=${lat}&lon=${lon}`
       );
 
       if (!response.ok) {

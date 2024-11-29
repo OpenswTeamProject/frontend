@@ -18,12 +18,36 @@ const ListComponent: React.FC<ListComponentProps> = ({
 
   return (
     <div
-      className="mt-8 bg-gray-100 rounded-lg p-4 w-full max-w-md border border-green-500"
+      className="mt-8 bg-gray-100 rounded-2xl p-4 w-full max-w-xl border border-green-500"
       style={{
-        maxHeight: '300px', // 최대 높이를 설정
+        maxHeight: '400px', // 최대 높이를 설정
         overflowY: 'auto',  // 스크롤 활성화
+        paddingRight: '10px', // 스크롤바 오른쪽 간격 조정
       }}
     >
+      <style>
+        {`
+        /* 스크롤바 스타일 */
+        div::-webkit-scrollbar {
+          width: 18px; /* 스크롤바의 너비 */
+        }
+  
+        div::-webkit-scrollbar-track {
+          background: #f0f0f0; /* 스크롤바 트랙 색상 */
+          border-radius: 11px; /* 트랙 모서리 둥글게 */
+        }
+  
+        div::-webkit-scrollbar-thumb {
+          background: #a3a3a3; /* 스크롤바 핸들 색상 */
+          border-radius: 14px; /* 핸들 모서리 둥글게 */
+        }
+  
+        div::-webkit-scrollbar-thumb:hover {
+          background: #7e7e7e; /* 스크롤바 핸들 hover 색상 */
+        }
+        `}
+      </style>
+    
       {results.length === 0 ? (
         <p className="text-gray-400">검색 결과가 없습니다.</p> // 결과가 없을 때 메시지 표시
       ) : (
