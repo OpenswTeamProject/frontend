@@ -16,29 +16,31 @@ const RentalStationList: React.FC<RentalStationListProps> = ({ stations = [] }) 
   }
 
   return (
-    <div className="border-2 border-green-500 bg-gray-100 rounded-lg w-1/3">
-      {/* 제목 */}
-      <div className="bg-gray-200 p-2 border-b-2 border-green-500 text-center font-bold sticky top-0">
-        근처 대여소 정보
-      </div>
-      {/* 스크롤 가능한 리스트 */}
+    <div className="border-2 border-green-500 bg-gray-100 rounded-lg w-full">
+  {/* 제목 */}
+  <div className="bg-gray-200 p-2 border-b-2 border-green-500 text-center font-bold sticky top-0">
+    근처 대여소 정보
+  </div>
+  {/* 스크롤 가능한 리스트 */}
+  <div
+    className="p-4 overflow-y-auto scrollbar-custom"
+    style={{
+      maxHeight: "20rem", // 스크롤 가능한 최대 높이 설정
+    }}
+  >
+    {stations.map((station, index) => (
       <div
-        className="p-4 overflow-y-auto h-64 scrollbar-custom"
-        style={{
-          maxHeight: "15rem", // 스크롤 가능한 최대 높이 설정
-        }}
+        key={index}
+        className="bg-gray-200 p-4 rounded-lg mb-2 shadow-md hover:bg-green-100"
       >
-        {stations.map((station, index) => (
-          <div
-            key={index}
-            className="bg-gray-200 p-2 rounded-lg mb-2 shadow-md hover:bg-green-100"
-          >
-            <p className="font-bold">{station.station_name}</p>
-            <p className="text-sm text-gray-600">거치대 수: {station.total_slots}</p>
-          </div>
-        ))}
+        <p className="font-bold">{station.station_name}</p>
+        <p className="text-sm text-gray-600">거치대 수: {station.total_slots}</p>
       </div>
-    </div>
+    ))}
+  </div>
+</div>
+
+
   );
 };
 

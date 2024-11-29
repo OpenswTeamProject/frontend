@@ -17,7 +17,7 @@ const ListPage: React.FC = () => {
 
     try {
       const response = await fetch(
-        `http://localhost:5000/stations?search=${encodeURIComponent(searchTerm)}`
+        `http://34.64.194.23:5000/stations?search=${encodeURIComponent(searchTerm)}`
       );
 
       if (!response.ok) {

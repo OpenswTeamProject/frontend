@@ -46,7 +46,7 @@ const Statistics: React.FC = () => {
     const fetchStationInfo = async () => {
       try {
         const response = await fetch(
-          `http://localhost:5000/stations/station_info?station=${encodeURIComponent(
+          `http://34.64.194.23:5000/stations/station_info?station=${encodeURIComponent(
             selectedStation
           )}`
         );
@@ -79,7 +79,7 @@ const Statistics: React.FC = () => {
   const fetchWeatherInfo = async (lat: number, lon: number) => {
     try {
       const response = await fetch(
-        `http://localhost:5000/weather/current?lat=${lat}&lon=${lon}`
+        `http://34.64.194.23:5000/weather/current?lat=${lat}&lon=${lon}`
       );
 
       if (!response.ok) {
@@ -102,7 +102,7 @@ const Statistics: React.FC = () => {
   const fetchForecastInfo = async (lat: number, lon: number) => {
     try {
       const response = await fetch(
-        `http://localhost:5000/weather/forecast?lat=${lat}&lon=${lon}`
+        `http://34.64.194.23:5000/weather/forecast?lat=${lat}&lon=${lon}`
       );
 
       if (!response.ok) {
@@ -168,16 +168,16 @@ const Statistics: React.FC = () => {
   }
 
 return (
-    <div className="grid grid-cols-12 gap-4 p-6 bg-gray-50 h-screen">
-      {/* 좌측 패널 */}
-      <div className="col-span-4">
-        <button className="bg-green-500 text-white w-full py-2 rounded-lg">
-          다른 대여소 찾으러가기
-        </button>
-        <div className="bg-gray-200 p-4 mt-4 rounded-lg">
-          <h2 className="text-lg font-semibold mb-4">근처 대여소 정보</h2>
-          <RentalStationList stations={stationInfo?.nearby_stations || []} />
-        </div>
+  <div className="grid grid-cols-12 gap-4 p-6 bg-gray-50 h-screen">
+  {/* 좌측 패널 */}
+  <div className="col-span-4 h-full bg-gray-200 p-6 rounded-lg shadow-lg">
+    <button className="bg-green-500 text-white w-full py-4 rounded-lg text-lg font-bold">
+      다른 대여소 찾으러가기
+    </button>
+    <div className="bg-white p-6 mt-6 rounded-lg shadow-md h-4/5 overflow-auto">
+      <h2 className="text-xl font-semibold mb-4">근처 대여소 정보</h2>
+      <RentalStationList stations={stationInfo?.nearby_stations || []} />
+    </div>
       </div>
 
       {/* 우측 패널 */}
