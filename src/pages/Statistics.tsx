@@ -6,7 +6,6 @@ import BikeDemandGraph from "../components/BikeDemandGraph";
 import Map from "../components/Map";
 import "leaflet/dist/leaflet.css";
 
-
 const Statistics: React.FC = () => {
   const location = useLocation();
   const selectedStation = location.state?.selectedStation || "대여소 정보 없음";
@@ -43,21 +42,6 @@ const Statistics: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
-  const getWeatherIcon = (description: string): string => {
-    const iconMapping: Record<string, string> = {
-      "clear sky": "01d",
-      "few clouds": "02d",
-      "scattered clouds": "03d",
-      "broken clouds": "04d",
-      "shower rain": "09d",
-      rain: "10d",
-      thunderstorm: "11d",
-      snow: "13d",
-      mist: "50d",
-    };
-    return iconMapping[description.toLowerCase()] || "01d";
-  };
-
   useEffect(() => {
     const fetchStationInfo = async () => {
       try {
@@ -75,7 +59,10 @@ const Statistics: React.FC = () => {
         setStationInfo(data);
 
         if (data && data.latitude && data.longitude) {
-          await Promise.all([fetchWeatherInfo(data.latitude, data.longitude), fetchForecastInfo(data.latitude, data.longitude)]);
+          await Promise.all([
+            fetchWeatherInfo(data.latitude, data.longitude),
+            fetchForecastInfo(data.latitude, data.longitude),
+          ]);
         }
       } catch (err) {
         setError(err instanceof Error ? err.message : "알 수 없는 오류");
@@ -136,9 +123,7 @@ const Statistics: React.FC = () => {
             rainVolume: forecast.rain_volume || 0,
             snowVolume: forecast.snow_volume || 0,
             description: forecast.description,
-            weatherIcon: `http://openweathermap.org/img/wn/${getWeatherIcon(
-              forecast.description
-            )}@2x.png`,
+            weatherIcon: forecast.weather_icon,
             count: 1,
           };
         } else {
@@ -182,81 +167,66 @@ const Statistics: React.FC = () => {
     return <div className="text-gray-400">대여소 또는 날씨 정보를 불러올 수 없습니다.</div>;
   }
 
-  return (
-    <div
-      className="min-h-screen bg-gray-800 flex flex-col items-center justify-center text-white"
-      style={{
-        backgroundImage: "url('/ListBack.png')",
-      }}
-    >
-      <div className="w-full max-w-4xl bg-white p-6 rounded-lg shadow-lg text-black">
-        <header className="bg-gray-200 p-4 rounded-lg shadow-md text-center border-2 border-green-500">
-          <h1 className="text-xl font-bold">{stationInfo.station_name}</h1>
-        </header>
+return (
+    <div className="grid grid-cols-12 gap-4 p-6 bg-gray-50 h-screen">
+      {/* 좌측 패널 */}
+      <div className="col-span-4">
+        <button className="bg-green-500 text-white w-full py-2 rounded-lg">
+          다른 대여소 찾으러가기
+        </button>
+        <div className="bg-gray-200 p-4 mt-4 rounded-lg">
+          <h2 className="text-lg font-semibold mb-4">근처 대여소 정보</h2>
+          <RentalStationList stations={stationInfo?.nearby_stations || []} />
+        </div>
+      </div>
 
-        <div className="flex justify-around items-center py-6">
-          <DockInfo totalSlots={stationInfo.total_slots} />
-          <div className="flex space-x-4">
-            <div className="border-2 border-green-500 bg-gray-200 p-3 rounded-lg w-24 text-center">
-              <p className="text-sm font-bold text-green-700">온도</p>
-              <p className="text-lg font-semibold">{weatherInfo.temperature}°C</p>
-            </div>
-            <div className="border-2 border-green-500 bg-gray-200 p-3 rounded-lg w-24 text-center">
-              <p className="text-sm font-bold text-green-700">습도</p>
-              <p className="text-lg font-semibold">{weatherInfo.humidity}%</p>
-            </div>
-            <div className="border-2 border-green-500 bg-gray-200 p-3 rounded-lg w-24 text-center">
-              <p className="text-sm font-bold text-green-700">풍속</p>
-              <p className="text-lg font-semibold">{weatherInfo.windSpeed} m/s</p>
-            </div>
+      {/* 우측 패널 */}
+      <div className="col-span-8 space-y-6">
+        {/* 상단 박스 */}
+        <div className="grid grid-cols-2 gap-4">
+          <div className="bg-white p-4 rounded-lg text-center shadow">
+            <p className="text-gray-600 font-bold">거치대수</p>
+            <p className="text-xl font-semibold">
+              {stationInfo?.total_slots ?? "N/A"}
+            </p>
           </div>
-          <div className="flex flex-col items-center">
+          <div className="bg-white p-4 rounded-lg text-center shadow">
+            <p className="text-gray-600 font-bold">현재날씨정보</p>
+            <p className="text-sm">
+              {weatherInfo?.description ?? "날씨 정보 없음"}
+            </p>
             <img
-              src={weatherInfo.weatherIcon}
-              alt={weatherInfo.description}
-              className="w-36 h-36 object-contain"
+              src={weatherInfo?.weatherIcon || ""}
+              alt="날씨 아이콘"
+              className="w-12 h-12 mx-auto"
             />
-            <p className="text-sm font-bold text-gray-700">{weatherInfo.description}</p>
           </div>
         </div>
-
-        {stationInfo.latitude && stationInfo.longitude && ( //지도
-          <div className="my-8">
-            <h2 className="text-xl font-bold text-center mb-4">대여소 위치</h2>
-            <Map latitude={stationInfo.latitude} longitude={stationInfo.longitude} />
+        {/* 하단 박스 */}
+        <div className="grid grid-cols-3 gap-4">
+          <div className="bg-white p-4 rounded-lg text-center shadow">
+            <p className="text-gray-600 font-bold">온도</p>
+            <p className="text-xl font-semibold">
+              {weatherInfo?.temperature ?? "N/A"}°C
+            </p>
           </div>
-        )}
-
-        <div className="flex justify-between mt-6 space-x-6">
-          <div className="w-2/3">
-            <BikeDemandGraph station={selectedStation} />
+          <div className="bg-white p-4 rounded-lg text-center shadow">
+            <p className="text-gray-600 font-bold">풍속</p>
+            <p className="text-xl font-semibold">
+              {weatherInfo?.windSpeed ?? "N/A"} m/s
+            </p>
           </div>
-          <RentalStationList stations={stationInfo.nearby_stations} />
+          <div className="bg-white p-4 rounded-lg text-center shadow">
+            <p className="text-gray-600 font-bold">습도</p>
+            <p className="text-xl font-semibold">
+              {weatherInfo?.humidity ?? "N/A"}%
+            </p>
+          </div>
         </div>
-
-        <div className="mt-8 bg-gray-100 p-6 rounded-lg">
-          <h2 className="text-xl font-bold text-center mb-4">4일간 날씨 예보</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
-            {forecastInfo.map((forecast, index) => (
-              <div
-                key={index}
-                className="border-2 border-green-500 bg-white p-4 rounded-lg text-center"
-              >
-                <p className="text-sm font-bold">{forecast.datetime}</p>
-                <img
-                  src={forecast.weatherIcon}
-                  alt={forecast.description}
-                  className="w-16 h-16 mx-auto"
-                />
-                <p className="text-lg font-semibold">{forecast.temperature}°C</p>
-                <p className="text-sm">{forecast.description}</p>
-                <p className="text-sm">습도: {forecast.humidity}%</p>
-                <p className="text-sm">풍속: {forecast.windSpeed} m/s</p>
-                <p className="text-sm">강수량: {forecast.rainVolume} mm</p>
-                <p className="text-sm">강설량: {forecast.snowVolume} mm</p>
-              </div>
-            ))}
-          </div>
+        {/* 지도와 그래프 */}
+        <div className="grid grid-cols-2 gap-4">
+          <BikeDemandGraph station={selectedStation} />
+          <Map latitude={stationInfo?.latitude || 0} longitude={stationInfo?.longitude || 0} />
         </div>
       </div>
     </div>
