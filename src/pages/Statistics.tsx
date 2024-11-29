@@ -217,7 +217,7 @@ return (
             </p>
           </div>
           <div className="bg-white p-4 rounded-lg text-center shadow">
-            <p className="text-gray-600 font-bold">습도</p>
+            <p className="text-gray-600 font-bold">습 도</p>
             <p className="text-xl font-semibold">
               {weatherInfo?.humidity ?? "N/A"}%
             </p>
