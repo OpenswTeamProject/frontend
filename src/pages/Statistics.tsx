@@ -191,24 +191,20 @@ const Statistics: React.FC = () => {
         </div>
       </header>
       <div className="flex">
-      <aside className="w-1/6 bg-gradient-to-r from-white to-gray-100 p-6 flex flex-col justify-between shadow-lg">
-
-  <div className="flex items-center justify-center mb-6">
-
-  </div>
-
+      <aside className="w-1/ bg-gradient-to-r from-white to-gray-100 p-6 flex flex-col shadow-lg">
   <button
     onClick={() => navigate("/Listpage")}
-    className="flex items-center space-x-2 text-xl text-bold text-gray-800 hover:text-green-500 mb-6 ml-9"
+    className="flex items-center space-x-2 text-xl font-bold text-gray-800 hover:text-green-500 mt-10"
   >
-    <ImSearch className="text-green-600 h-6 w-6" />
+    <ImSearch className="text-green-600 h-8 w-8" />
     <span>대여소 검색하러 가기</span>
   </button>
 
-  <div className="mt-auto">
+  <div className="mt-9">
     <RentalStationList stations={stationInfo.nearby_stations} />
   </div>
 </aside>
+
 
         <main className="flex-1 p-6">
           <div className="grid grid-cols-4 gap-4 mb-6">
@@ -261,13 +257,12 @@ const Statistics: React.FC = () => {
 </div>
 
 <div className="mt-6 bg-white rounded-[30px] shadow-lg p-4">
-  {/* Section Header */}
+
   <p className="text-[30px] font-bold text-navy-700">날씨예측</p>
   <p className="text-sm font-bold text-green-500 ml-1">4day Forecast</p>
 
-  {/* Weather Forecast Table */}
-  <table className="w-full text-sm text-left text-gray-500">
-    <thead className="text-lg text-gray-700 border-b border-gray-300">
+  <table className="w-full text-[18px] font-bold text-left text-navy-700">
+    <thead className="text-lg text-gray-400 border-b border-gray-300">
       <tr>
         <th scope="col" className="px-6 py-3">Date</th>
         <th scope="col" className="px-6 py-3">Status</th>
@@ -280,13 +275,13 @@ const Statistics: React.FC = () => {
     </thead>
     <tbody>
       {forecastInfo.map((forecast, index) => (
-        <tr key={index} className="bg-white border-b text-lg">
+        <tr key={index} className="bg-white">
           <td className="px-6 py-4">{forecast.datetime}</td>
           <td className="px-6 py-4 flex items-center space-x-2">
             <img
               src={forecast.weatherIcon}
               alt={forecast.description}
-              className="inline w-6 h-6"
+              className="inline w-10 h-10"
             />
             <span>{forecast.description}</span>
           </td>
