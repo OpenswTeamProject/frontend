@@ -26,7 +26,7 @@ const ListComponent: React.FC<ListComponentProps> = ({
         <thead className=" bg-gray-200">
           <tr>
             <th className="w-1/12 px-4 py-3 border-b text-left text-sm font-bold text-gray-500">
-              번호
+              No.
             </th>
             <th className="px-2 py-3 border-b  text-sm font-bold text-gray-500 pr-10 ">
               
