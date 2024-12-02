@@ -30,7 +30,7 @@ const BikeDemandGraph: React.FC<{ station: string }> = ({ station }) => {
   const fetchPredictedData = async () => {
     try {
       const response = await fetch(
-        `http://localhost:5000/predict?station=${encodeURIComponent(station)}`,
+        `http://34.64.194.23:31234/predict?station=${encodeURIComponent(station)}`,
         {
           method: "POST", // 서버가 POST를 요구한다면
           headers: {
