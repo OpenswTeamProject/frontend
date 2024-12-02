@@ -6,7 +6,7 @@ import Map from "../components/Map";
 
 import { ImSearch } from "react-icons/im";
 import { WiHumidity, WiThermometer, WiWindy } from "react-icons/wi";
-import { TiPinOutline } from "react-icons/ti";
+import { MdPedalBike } from "react-icons/md";
 
 const Statistics: React.FC = () => {
   const location = useLocation();
@@ -171,135 +171,125 @@ const Statistics: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-100">
-      <header className="bg-gradient-to-r from-white to-white p-3 shadow flex items-center justify-between">
-        <div>
-          <h1 className="ml-8 mt-[10px] text-3xl font-bold text-gray-400">
-            {stationInfo.station_name}
-          </h1>
-        </div>
-        <div className="flex items-center">
-          <img
-            src={weatherInfo.weatherIcon}
-            alt={weatherInfo.description}
-            className="w-20 h-20 mr-1"
-          />
-          <div className="mr-3">
-            <p className="text-2xl font-bold">{weatherInfo.temperature}°C</p>
-            <p className="text-sm text-gray-600">{weatherInfo.description}</p>
-          </div>
-        </div>
-      </header>
-      <div className="flex">
-      <aside className="w-1/ bg-gradient-to-r from-white to-gray-100 p-6 flex flex-col shadow-lg">
-  <button
-    onClick={() => navigate("/Listpage")}
-    className="flex items-center space-x-2 text-xl font-bold text-gray-800 hover:text-green-500 mt-10"
-  >
-    <ImSearch className="text-green-600 h-8 w-8" />
-    <span>대여소 검색하러 가기</span>
-  </button>
-
-  <div className="mt-9">
-    <RentalStationList stations={stationInfo.nearby_stations} />
-  </div>
-</aside>
-
-
-        <main className="flex-1 p-6">
-          <div className="grid grid-cols-4 gap-4 mb-6">
-            {[
-              {
-                label: "거치대 개수",
-                value: stationInfo.total_slots,
-                icon: <TiPinOutline className="text-green-500 h-9 w-9" />,
-              },
-              {
-                label: "온도",
-                value: `${weatherInfo.temperature}°C`,
-                icon: <WiThermometer className="text-blue-500 h-10 w-10" />,
-              },
-              {
-                label: "습도",
-                value: `${weatherInfo.humidity}%`,
-                icon: <WiHumidity className="text-blue-500 h-10 w-10" />,
-              },
-              {
-                label: "풍속",
-                value: `${weatherInfo.windSpeed} m/s
-                `,
-                icon: <WiWindy className="text-blue-500 h-10 w-10" />,
-              },
-            ].map((item, index) => (
-              <div
-                key={index}
-                className="p-4 bg-white rounded-[20px] text-center shadow-lg flex flex-col items-center"
-              >
-                {item.icon}
-                <p className="text-xl font-bold text-gray-400 mt-2">{item.label}</p>
-                <p className="text-3xl font-bold text-navy-700">{item.value}</p>
-              </div>
-            ))}
-          </div>
-          <div className="grid grid-cols-2 gap-4">
-            
-  <section className="bg-white rounded-[30px] shadow-lg p-4">
-    <p className="text-[30px] font-bold text-navy-800">대여소위치</p>
-    <p className="text-sm font-bold text-green-500">KakaoMap</p>
-    <Map latitude={stationInfo.latitude} longitude={stationInfo.longitude} />
-  </section>
-
-  <div className="bg-white rounded-[30px] shadow-lg p-4">
-    <p className="text-[30px] font-bold text-navy-800">대여수요예측</p>
-    <p className="text-sm font-bold text-green-500">Demand Forecasting</p>
-    <BikeDemandGraph station={selectedStation} />
-  </div>
-</div>
-
-<div className="mt-6 bg-white rounded-[30px] shadow-lg p-4">
-
-  <p className="text-[30px] font-bold text-navy-700">날씨예측</p>
-  <p className="text-sm font-bold text-green-500 ml-1">4day Forecast</p>
-
-  <table className="w-full text-[18px] font-bold text-left text-navy-700">
-    <thead className="text-lg text-gray-400 border-b border-gray-300">
-      <tr>
-        <th scope="col" className="px-6 py-3">Date</th>
-        <th scope="col" className="px-6 py-3">Status</th>
-        <th scope="col" className="px-6 py-3">Temperature</th>
-        <th scope="col" className="px-6 py-3">Humidity</th>
-        <th scope="col" className="px-6 py-3">Wind Speed</th>
-        <th scope="col" className="px-6 py-3">Rain Volume</th>
-        <th scope="col" className="px-6 py-3">Snow Volume</th>
-      </tr>
-    </thead>
-    <tbody>
-      {forecastInfo.map((forecast, index) => (
-        <tr key={index} className="bg-white">
-          <td className="px-6 py-4">{forecast.datetime}</td>
-          <td className="px-6 py-4 flex items-center space-x-2">
-            <img
-              src={forecast.weatherIcon}
-              alt={forecast.description}
-              className="inline w-10 h-10"
-            />
-            <span>{forecast.description}</span>
-          </td>
-          <td className="px-6 py-4">{forecast.temperature}°C</td>
-          <td className="px-6 py-4">{forecast.humidity}%</td>
-          <td className="px-6 py-4">{forecast.windSpeed} m/s</td>
-          <td className="px-6 py-4">{forecast.rainVolume} mm</td>
-          <td className="px-6 py-4">{forecast.snowVolume} mm</td>
-        </tr>
-      ))}
-    </tbody>
-  </table>
-</div>
-
-
-        </main>
+<div className="min-h-screen bg-gray-100">
+  <header className="sticky top-0 z-10 bg-white p-2 shadow flex items-center justify-between">
+    <div>
+      <h1 className="ml-6 mt-[8px] text-2xl font-bold text-gray-400">
+        {stationInfo?.station_name}
+      </h1>
+    </div>
+    <div className="flex items-center">
+      <img
+        src={weatherInfo?.weatherIcon}
+        alt={weatherInfo?.description}
+        className="w-16 h-16 mr-1"
+      />
+      <div className="mr-2">
+        <p className="text-xl font-bold">{weatherInfo?.temperature}°C</p>
+        <p className="text-sm text-gray-600">{weatherInfo?.description}</p>
       </div>
     </div>
+  </header>
+  <div className="flex w-full">
+    <aside className="w-1/7 bg-gradient-to-r from-white to-gray-100 p-4 shadow-lg">
+      <button
+        onClick={() => navigate("/Listpage")}
+        className="flex items-center space-x-2 text-lg font-bold text-gray-800 hover:text-green-500 mt-9"
+      >
+        <ImSearch className="text-green-600 h-6 w-6" />
+        <span>대여소 검색하러 가기</span>
+      </button>
+      <div className="mt-12">
+        <RentalStationList stations={stationInfo?.nearby_stations || []} />
+      </div>
+    </aside>
+    <main className="flex-1 p-4">
+      <div className="grid grid-cols-4 gap-3 mb-4">
+        {[
+          {
+            label: "거치대 개수",
+            value: stationInfo?.total_slots,
+            icon: <MdPedalBike className="text-green-500 h-7 w-7" />,
+          },
+          {
+            label: "온도",
+            value: `${weatherInfo?.temperature}°C`,
+            icon: <WiThermometer className="text-blue-500 h-8 w-8" />,
+          },
+          {
+            label: "습도",
+            value: `${weatherInfo?.humidity}%`,
+            icon: <WiHumidity className="text-blue-500 h-8 w-8" />,
+          },
+          {
+            label: "풍속",
+            value: `${weatherInfo?.windSpeed} m/s`,
+            icon: <WiWindy className="text-blue-500 h-8 w-8" />,
+          },
+        ].map((item, index) => (
+          <div
+            key={index}
+            className="p-3 bg-white rounded-[16px] text-center shadow-lg flex flex-col items-center"
+          >
+            {item.icon}
+            <p className="text-lg font-bold text-gray-400 mt-1">{item.label}</p>
+            <p className="text-2xl font-bold text-navy-700">{item.value}</p>
+          </div>
+        ))}
+      </div>
+      <div className="grid grid-cols-2 gap-3">
+        <section className="bg-white rounded-[20px] shadow-lg p-3">
+          <p className="text-[24px] font-bold text-navy-800">대여소위치</p>
+          <p className="text-xs font-bold text-green-500">KakaoMap</p>
+          <Map latitude={stationInfo?.latitude} longitude={stationInfo?.longitude} />
+        </section>
+        <div className="bg-white rounded-[20px] shadow-lg p-3">
+          <p className="text-[24px] font-bold text-navy-800">대여수요예측</p>
+          <p className="text-xs font-bold text-green-500">Demand Forecasting</p>
+          <BikeDemandGraph station={selectedStation} />
+        </div>
+      </div>
+      <div className="mt-4 bg-white rounded-[20px] shadow-lg p-3">
+        <p className="text-[24px] font-bold text-navy-700">날씨예측</p>
+        <p className="text-xs font-bold text-green-500 ml-1">4day Forecast</p>
+        <table className="w-full text-[14px] font-bold text-left text-navy-700">
+          <thead className="text-sm text-gray-400 border-b border-gray-300">
+            <tr>
+              <th scope="col" className="px-4 py-2">Date</th>
+              <th scope="col" className="px-4 py-2">Status</th>
+              <th scope="col" className="px-4 py-2">Temperature</th>
+              <th scope="col" className="px-4 py-2">Humidity</th>
+              <th scope="col" className="px-4 py-2">Wind Speed</th>
+              <th scope="col" className="px-4 py-2">Rain Volume</th>
+              <th scope="col" className="px-4 py-2">Snow Volume</th>
+            </tr>
+          </thead>
+          <tbody>
+            {forecastInfo.map((forecast, index) => (
+              <tr key={index} className="bg-white">
+                <td className="px-4 py-2">{forecast.datetime}</td>
+                <td className="px-4 py-2 flex items-center space-x-1">
+                  <img
+                    src={forecast.weatherIcon}
+                    alt={forecast.description}
+                    className="inline w-8 h-8"
+                  />
+                  <span>{forecast.description}</span>
+                </td>
+                <td className="px-4 py-2">{forecast.temperature}°C</td>
+                <td className="px-4 py-2">{forecast.humidity}%</td>
+                <td className="px-4 py-2">{forecast.windSpeed} m/s</td>
+                <td className="px-4 py-2">{forecast.rainVolume} mm</td>
+                <td className="px-4 py-2">{forecast.snowVolume} mm</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </main>
+  </div>
+</div>
+
   );
 };
 

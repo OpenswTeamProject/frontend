@@ -22,7 +22,7 @@ const RentalStationList: React.FC<RentalStationListProps> = ({ stations = [] }) 
 
       <div
         className="overflow-y-auto max-h-64 scrollbar-custom px-3" 
-        style={{ paddingRight: "10px" }} 
+        style={{ paddingRight: "15px" }} 
       >
         {stations.map((station, index) => (
           <div
