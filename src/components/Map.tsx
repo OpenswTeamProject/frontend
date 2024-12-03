@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 
 interface MapProps {
   latitude: number;
@@ -7,10 +7,11 @@ interface MapProps {
 
 const Map: React.FC<MapProps> = ({ latitude, longitude }) => {
   const mapRef = useRef<HTMLDivElement>(null);
+  const [isMapLoaded, setIsMapLoaded] = useState(false);
 
   useEffect(() => {
     const initializeMap = () => {
-      if (!mapRef.current) return;
+      if (!mapRef.current || !window.kakao || !window.kakao.maps) return;
 
       const mapOption = {
         center: new window.kakao.maps.LatLng(latitude, longitude), // 지도 중심 좌표
@@ -26,20 +27,35 @@ const Map: React.FC<MapProps> = ({ latitude, longitude }) => {
       marker.setMap(map); // 마커 추가
     };
 
-    // 카카오맵 스크립트가 로드되지 않았다면 추가
-    if (!window.kakao || !window.kakao.maps) {
-      const script = document.createElement("script");
-      script.src = `//dapi.kakao.com/v2/maps/sdk.js?appkey=YOUR_JAVASCRIPT_KEY`;
-      script.onload = initializeMap; // 스크립트 로드 후 지도 초기화
-      document.head.appendChild(script);
-    } else {
-      initializeMap();
-    }
-  }, [latitude, longitude]);
+    const loadKakaoMapScript = () => {
+      return new Promise<void>((resolve) => {
+        if (window.kakao && window.kakao.maps) {
+          setIsMapLoaded(true);
+          resolve();
+        } else {
+          const script = document.createElement("script");
+          const apiKey = import.meta.env.VITE_MAP_API_KEY; // 환경 변수에서 API 키 가져오기
+          script.src = `//dapi.kakao.com/v2/maps/sdk.js?appkey=${apiKey}&autoload=false`;
+          script.onload = () => {
+            window.kakao.maps.load(() => {
+              setIsMapLoaded(true);
+              resolve();
+            });
+          };
+          document.head.appendChild(script);
+        }
+      });
+    };
+
+    // 카카오맵 스크립트 로드 후 지도 초기화
+    loadKakaoMapScript().then(() => {
+      if (isMapLoaded) {
+        initializeMap();
+      }
+    });
+  }, [latitude, longitude, isMapLoaded]);
 
   return <div ref={mapRef} style={{ width: "100%", height: "450px", marginTop: "20px" }} />;
-
 };
 
 export default Map;
-
