@@ -42,3 +42,4 @@ const Map: React.FC<MapProps> = ({ latitude, longitude }) => {
 };
 
 export default Map;
+

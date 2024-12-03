@@ -32,6 +32,7 @@ const BikeDemandGraph: React.FC<{ station: string }> = ({ station }) => {
     try {
       const response = await fetch(
         `${BASE_API_URL}/predict?station=${encodeURIComponent(station)}`,
+
         {
           method: "POST",
           headers: {

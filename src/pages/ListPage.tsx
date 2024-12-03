@@ -25,6 +25,7 @@ const ListPage: React.FC = () => {
     try {
       const response = await fetch(
         `${BASE_API_URL}/stations?search=${encodeURIComponent(searchTerm)}`
+
       );
 
       if (!response.ok) {

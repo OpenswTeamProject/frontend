@@ -4,6 +4,7 @@ import RentalStationList from "../components/RentalStationList";
 import BikeDemandGraph from "../components/BikeDemandGraph";
 import Map from "../components/Map";
 
+
 import { ImSearch } from "react-icons/im";
 import { WiHumidity, WiThermometer, WiWindy } from "react-icons/wi";
 import { MdPedalBike } from "react-icons/md";
@@ -45,10 +46,13 @@ const Statistics: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
+
+
   useEffect(() => {
     const fetchStationInfo = async () => {
       try {
         const response = await fetch(
+
           `${BASE_API_URL}/stations/station_info?station=${encodeURIComponent(
             selectedStation
           )}`
@@ -62,10 +66,12 @@ const Statistics: React.FC = () => {
         setStationInfo(data);
 
         if (data && data.latitude && data.longitude) {
+
           await Promise.all([
             fetchWeatherInfo(data.latitude, data.longitude),
             fetchForecastInfo(data.latitude, data.longitude),
           ]);
+
         }
       } catch (err) {
         setError(err instanceof Error ? err.message : "알 수 없는 오류");
@@ -82,7 +88,9 @@ const Statistics: React.FC = () => {
   const fetchWeatherInfo = async (lat: number, lon: number) => {
     try {
       const response = await fetch(
+
         `${BASE_API_URL}/weather/current?lat=${lat}&lon=${lon}`
+
       );
 
       if (!response.ok) {
