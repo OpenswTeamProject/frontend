@@ -10,6 +10,7 @@ import {
   Tooltip,
   Legend,
 } from "chart.js";
+const BASE_API_URL = import.meta.env.VITE_API_URL;
 
 // Register required Chart.js components
 ChartJS.register(
@@ -30,7 +31,7 @@ const BikeDemandGraph: React.FC<{ station: string }> = ({ station }) => {
   const fetchPredictedData = async () => {
     try {
       const response = await fetch(
-        `http://localhost:5000/predict?station=${encodeURIComponent(station)}`,
+        `${BASE_API_URL}/predict?station=${encodeURIComponent(station)}`,
         {
           method: "POST",
           headers: {
@@ -45,7 +46,13 @@ const BikeDemandGraph: React.FC<{ station: string }> = ({ station }) => {
 
       const result = await response.json();
 
-      const newLabels = result.map((item: any) => item.date);
+      const newLabels = result.map((item: any) => {
+        const date = new Date(item.date);
+        const month = (date.getMonth() + 1).toString().padStart(2, '0'); // 월 (1월이 0부터 시작하므로 +1)
+        const day = date.getDate().toString().padStart(2, '0'); // 일
+        return `${month}-${day}`; // "MM-DD" 형식으로 반환
+      });
+
       const newData = result.map((item: any) => parseFloat(item.predicted_rental.toFixed(1)));
 
       setLabels(newLabels);

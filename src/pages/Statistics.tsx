@@ -12,7 +12,7 @@ const Statistics: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const selectedStation = location.state?.selectedStation || "대여소 정보 없음";
-
+  const BASE_API_URL = import.meta.env.VITE_API_URL;
   const [stationInfo, setStationInfo] = useState<{
     station_name: string;
     total_slots: number;
@@ -49,7 +49,7 @@ const Statistics: React.FC = () => {
     const fetchStationInfo = async () => {
       try {
         const response = await fetch(
-          `http://localhost:5000/stations/station_info?station=${encodeURIComponent(
+          `${BASE_API_URL}/stations/station_info?station=${encodeURIComponent(
             selectedStation
           )}`
         );
@@ -82,7 +82,7 @@ const Statistics: React.FC = () => {
   const fetchWeatherInfo = async (lat: number, lon: number) => {
     try {
       const response = await fetch(
-        `http://localhost:5000/weather/current?lat=${lat}&lon=${lon}`
+        `${BASE_API_URL}/weather/current?lat=${lat}&lon=${lon}`
       );
 
       if (!response.ok) {
@@ -105,7 +105,7 @@ const Statistics: React.FC = () => {
   const fetchForecastInfo = async (lat: number, lon: number) => {
     try {
       const response = await fetch(
-        `http://localhost:5000/weather/forecast?lat=${lat}&lon=${lon}`
+        `${BASE_API_URL}/weather/forecast?lat=${lat}&lon=${lon}`
       );
 
       if (!response.ok) {
