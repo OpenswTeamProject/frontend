@@ -191,7 +191,7 @@ const Statistics: React.FC = () => {
     </div>
   </header>
   <div className="flex w-full">
-    <aside className="w-1/7 bg-gradient-to-r from-white to-gray-100 p-4 shadow-lg">
+    <aside className="w-1/6 bg-gradient-to-r from-white to-gray-100 p-4 shadow-lg">
       <button
         onClick={() => navigate("/Listpage")}
         className="flex items-center space-x-2 text-lg font-bold text-gray-800 hover:text-green-500 mt-9"
