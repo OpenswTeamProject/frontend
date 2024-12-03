@@ -2,16 +2,17 @@ import React, { useEffect, useState } from "react";
 import { Line } from "react-chartjs-2";
 import {
   Chart as ChartJS,
-  CategoryScale, // 'category' 스케일
-  LinearScale, // Y축 스케일
+  CategoryScale,
+  LinearScale,
   PointElement,
   LineElement,
   Title,
   Tooltip,
   Legend,
 } from "chart.js";
+const BASE_API_URL = import.meta.env.VITE_API_URL;
 
-// 필요한 Chart.js 구성요소 등록
+// Register required Chart.js components
 ChartJS.register(
   CategoryScale,
   LinearScale,
@@ -30,9 +31,10 @@ const BikeDemandGraph: React.FC<{ station: string }> = ({ station }) => {
   const fetchPredictedData = async () => {
     try {
       const response = await fetch(
-        `http://localhost:5000/predict?station=${encodeURIComponent(station)}`,
+        `${BASE_API_URL}/predict?station=${encodeURIComponent(station)}`,
+
         {
-          method: "POST", // 서버가 POST를 요구한다면
+          method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
@@ -45,7 +47,13 @@ const BikeDemandGraph: React.FC<{ station: string }> = ({ station }) => {
 
       const result = await response.json();
 
-      const newLabels = result.map((item: any) => item.date);
+      const newLabels = result.map((item: any) => {
+        const date = new Date(item.date);
+        const month = (date.getMonth() + 1).toString().padStart(2, '0'); // 월 (1월이 0부터 시작하므로 +1)
+        const day = date.getDate().toString().padStart(2, '0'); // 일
+        return `${month}-${day}`; // "MM-DD" 형식으로 반환
+      });
+
       const newData = result.map((item: any) => parseFloat(item.predicted_rental.toFixed(1)));
 
       setLabels(newLabels);
@@ -67,28 +75,62 @@ const BikeDemandGraph: React.FC<{ station: string }> = ({ station }) => {
     labels,
     datasets: [
       {
-        label: "대여 수요 예측",
+        label: "대여수요예측",
         data,
-        backgroundColor: "rgba(75, 192, 192, 0.2)",
-        borderColor: "rgba(75, 192, 192, 1)",
-        borderWidth: 1,
+        borderColor: "#43a257", // Horizon primary color
+        backgroundColor: "rgba(67, 24, 255, 0.1)", // Horizon accent color
+        borderWidth: 5,
+        tension: 0.3, // Smooth curve
       },
     ],
   };
 
+  const chartOptions = {
+    responsive: true,
+    plugins: {
+      legend: {
+        display: false, // Hide legend for simplicity
+      },
+      tooltip: {
+        backgroundColor: "#1A202C", // Dark tooltip background
+        titleColor: "#FFFFFF",
+        bodyColor: "#A3AED0",
+        cornerRadius: 10, // Rounded tooltip
+        padding: 10,
+      },
+    },
+    scales: {
+      x: {
+        grid: {
+          display: false, // Remove grid lines for clean look
+        },
+        ticks: {
+          color: "#A3AED0", // Horizon axis text color
+          font: {
+            size: 20,
+          },
+        },
+        border: {
+          display: false, // Remove x-axis border
+        },
+      },
+      y: {
+        grid: {
+          display: false, // Remove y-axis grid lines
+        },
+        ticks: {
+          display: false, // Hide y-axis ticks for a minimal look
+        },
+        border: {
+          display: false, // Remove y-axis border
+        },
+      },
+    },
+  };
+
   return (
-    <div className="w-full">
-      <Line
-        data={chartData}
-        options={{
-          plugins: {
-            legend: { display: true },
-          },
-          scales: {
-            x: { type: "category" }, // 'category' 스케일 명시
-          },
-        }}
-      />
+    <div className="w-full p-4">
+      <Line data={chartData} options={chartOptions} />
     </div>
   );
 };
